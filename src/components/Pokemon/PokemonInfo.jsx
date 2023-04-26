@@ -1,49 +1,94 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 
 import PokemonErrorView from './PokemonErrorView';
 import PokemonDataView from './PokemonDataView';
 import PokemonPendingView from './PokemonPendingView';
 import PokemonAPI from '../services/pokemon-api';
 
-export default class PokemonInfo extends Component {
-  state = {
-    pokemon: null,
+export default function PokemonInfo({ pokemonName }) {
+  const [pokemon, setPokemon] = useState(null);
+  const [error, setError] = useState(null);
+  const [status, setStatus] = useState(null);
 
-    error: null,
-    status: 'idle',
-  };
-
-  componentDidUpdate(prevProps, prevState) {
-    const prevName = prevProps.pokemonName;
-    const nextName = this.props.pokemonName;
-
-    if (prevName !== nextName) {
-      this.setState({ status: 'pending' });
-
-      PokemonAPI.fetchPokemon(nextName)
-        .then(pokemon => this.setState({ pokemon, status: 'resolved' }))
-        .catch(error => this.setState({ error, status: 'rejected' }));
+  useEffect(() => {
+    if (!pokemonName) {
+      return;
     }
+    setStatus('pending');
+
+    PokemonAPI.fetchPokemon(pokemonName)
+      .then(pokemon => {
+        setPokemon(pokemon);
+        setStatus('resolved');
+      })
+      .catch(error => {
+        setError(error);
+        setStatus('rejected');
+      });
+  }, [pokemonName]);
+
+  if (status === 'idle') {
+    return <div>Введіть ім'я покемона</div>;
   }
-
-  render() {
-    const { pokemon, status, error } = this.state;
-    const { pokemonName } = this.props;
-
-    if (status === 'idle') {
-      return <div>Введіть ім'я покемона</div>;
-    }
-    if (status === 'pending') {
-      return <PokemonPendingView pokemonName={pokemonName} />;
-    }
-    if (status === 'rejected') {
-      return <PokemonErrorView message={error.message} />;
-    }
-    if (status === 'resolved') {
-      return <PokemonDataView pokemon={pokemon} />;
-    }
+  if (status === 'pending') {
+    return <PokemonPendingView pokemonName={pokemonName} />;
+  }
+  if (status === 'rejected') {
+    return <PokemonErrorView message={error.message} />;
+  }
+  if (status === 'resolved') {
+    return <PokemonDataView pokemon={pokemon} />;
   }
 }
+
+//===========================================================================================
+
+// import { Component } from 'react';
+
+// import PokemonErrorView from './PokemonErrorView';
+// import PokemonDataView from './PokemonDataView';
+// import PokemonPendingView from './PokemonPendingView';
+// import PokemonAPI from '../services/pokemon-api';
+
+// export default class PokemonInfo extends Component {
+//   state = {
+//     pokemon: null,
+
+//     error: null,
+//     status: 'idle',
+//   };
+
+//   componentDidUpdate(prevProps, prevState) {
+//     const prevName = prevProps.pokemonName;
+//     const nextName = this.props.pokemonName;
+
+//     if (prevName !== nextName) {
+//       this.setState({ status: 'pending' });
+
+//       PokemonAPI.fetchPokemon(nextName)
+//         .then(pokemon => this.setState({ pokemon, status: 'resolved' }))
+//         .catch(error => this.setState({ error, status: 'rejected' }));
+//     }
+//   }
+
+//   render() {
+//     const { pokemon, status, error } = this.state;
+//     const { pokemonName } = this.props;
+
+//     if (status === 'idle') {
+//       return <div>Введіть ім'я покемона</div>;
+//     }
+//     if (status === 'pending') {
+//       return <PokemonPendingView pokemonName={pokemonName} />;
+//     }
+//     if (status === 'rejected') {
+//       return <PokemonErrorView message={error.message} />;
+//     }
+//     if (status === 'resolved') {
+//       return <PokemonDataView pokemon={pokemon} />;
+//     }
+//   }
+// }
 
 //==========================================================================
 

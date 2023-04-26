@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // import axios from 'axios';
 import Modal from './Modal/Modal';
 import Clock from './Clock/Clock';
@@ -10,7 +11,9 @@ import Reader from './Reader/Reader';
 import publications from '../publications.json';
 import PokemonForm from './Pokemon/PokemonForm';
 import PokemonInfo from './Pokemon/PokemonInfo';
+import UserMenu from './UserMenu/UserMenu';
 
+import { useState } from 'react';
 export class App extends Component {
   state = {
     showModal: false,
@@ -19,9 +22,9 @@ export class App extends Component {
     pokemonName: '',
   };
 
-  // toggleModal = () => {
-  //   this.setState(({ showModal }) => ({ showModal: !showModal }));
-  // };
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({ showModal: !showModal }));
+  };
 
   // HTTP;
   // componentDidMount() {
@@ -37,7 +40,7 @@ export class App extends Component {
   };
 
   render() {
-    // const { showModal } = this.state;
+    const { showModal } = this.state;
 
     // const { pokemon, loading } = this.state;
 
@@ -46,21 +49,30 @@ export class App extends Component {
         <h1>CONTROL TEST</h1>
         {/* <button type="button" onClick={this.toggleModal}>
           Відкрити модалку
-        </button> */}
-        {/* {showModal && (
+        </button>
+        {showModal && (
           <Modal onClose={this.toggleModal}>
             <p>Text Modal</p>
             <button type="button" onClick={this.toggleModal}>
               Закрити модалку
             </button>
+
+            {showModal && <Clock />}
           </Modal>
         )} */}
+
+        <Clock />
+
+        <UserMenu />
+
         {/* <Tabs items={tabs} /> */}
-        {/* {showModal && <Clock />} */}
+
         {/* <IconButton onClick={this.toggleModal} aria-label="Додати тоду">
           IconButton
         </IconButton> */}
+
         {/* <Reader items={publications} /> */}
+
         {/* // HTTP */}
         <div style={{ maxWidth: 1170, margin: '0 auto', padding: 20 }}>
           {/* {pokemon && <div>{pokemon.name}</div>} */}
